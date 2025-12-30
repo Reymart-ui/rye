@@ -12,27 +12,44 @@
     <canvas id="fireworks"></canvas>
 
     <div class="container">
-        <h1>🎆 Happy New Year, <span id="name"></span> 🎆</h1>
+        <h1> Happy New Year<br><span id="name"></span> </h1>
 
         <p id="countdown"></p>
 
         <p class="message">
-            As the year begins,<br>
-            may I gently ask…
+            As we enter 2026,<br>
+            may I ask…
         </p>
 
         <p class="message bold">
-            Would you allow me to enter your life<br>
-            and share this new chapter with you?
+            Are you ready to start this new year?
         </p>
 
         <div class="buttons">
-            <button id="yesBtn">Yes, welcome 🤍</button>
+            <button id="yesBtn">Yes, I'm ready! 🤍</button>
             <button id="noBtn">Not yet 🙈</button>
         </div>
     </div>
 
-    <audio id="yesSound" src="yes.mp3"></audio>
+    <audio id="yesSound" src="main.mp4"></audio>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" loop autoplay>s
+        <source src="main.mp4" type="audio/mp4">
+    </audio>
+
+    <!-- Sounds for "Not yet" button options (one per message) -->
+    <!-- Replace src with your actual sound files (e.g., MP3, WAV, MP4). Keep them short! -->
+    <audio id="sound1" src="sound1.mp4" preload="auto"></audio>  <!-- For "Are you sure? 🙈" -->
+    <audio id="sound2" src="sound2.mp4" preload="auto"></audio>  <!-- For "Think again! 😏" -->
+    <audio id="sound3" src="sound3.mp4" preload="auto"></audio>  <!-- For "Come on, give it a shot! 💪" -->
+    <audio id="sound4" src="sound4.mp4" preload="auto"></audio>  <!-- For "Don't be shy! 🌟" -->
+    <audio id="sound5" src="sound5.mp4" preload="auto"></audio>  <!-- For "You know you want to! 😉" -->
+    <audio id="sound6" src="sound6.mp4" preload="auto"></audio>  <!-- For "One more try? 🎉" -->
+    <audio id="sound7" src="sound7.mp4" preload="auto"></audio>  <!-- For "Let's make it happen! 🚀" -->
+    <audio id="sound8" src="sound8.mp4" preload="auto"></audio>  <!-- For "Why not now? 🤔" -->
+    <audio id="sound9" src="sound9.mp4" preload="auto"></audio>  <!-- For "Embrace the new year! 🥳" -->
+    <audio id="sound10" src="sound10.mp4" preload="auto"></audio> <!-- For "Final chance? 😊" -->
 
     <script src="script.js"></script>
 </body>
