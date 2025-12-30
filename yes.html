@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome ✨</title>
+    <title>Hi there ✨</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
@@ -110,7 +110,7 @@
         // Start typing after a short delay
         setTimeout(typeCongrats, 2000);
 
-        // Fireworks display with improvements
+        // Fireworks display with silver/gold colors and slow-mo
         const canvas = document.getElementById("fireworksCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth;
@@ -118,7 +118,6 @@
 
         const particles = [];
         const fireworks = [];
-        const trails = []; // For particle trails
 
         class Particle {
             constructor(x, y, color, velocityX, velocityY, size, isText = false, text = '') {
@@ -141,8 +140,8 @@
 
                 this.x += this.velocityX;
                 this.y += this.velocityY;
-                this.velocityY += 0.08; // Stronger gravity
-                this.alpha -= 0.008; // Slower fade
+                this.velocityY += 0.04; // Reduced gravity for slow-mo
+                this.alpha -= 0.005; // Slower fade for lingering effect
             }
 
             draw() {
@@ -179,11 +178,15 @@
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height;
                 this.targetY = Math.random() * canvas.height / 2;
-                this.speed = Math.random() * 4 + 3;
-                this.color = `hsl(${Math.random() * 360}, 100%, 60%)`; // Brighter colors
+                this.speed = Math.random() * 3 + 2; // Slightly slower launch
+                // Randomly choose silver or gold
+                this.isGold = Math.random() > 0.5;
+                this.color = this.isGold 
+                    ? `rgb(255, ${215 + Math.random() * 40}, 0)` // Gold variations
+                    : `rgb(${192 + Math.random() * 64}, ${192 + Math.random() * 64}, ${192 + Math.random() * 64})`; // Silver variations
                 this.exploded = false;
                 this.secondaryExploded = false;
-                this.explodeDelay = Math.random() * 500 + 300; // Delay for secondary burst
+                this.explodeDelay = Math.random() * 200 + 600; // Longer delay for slow-mo double pop
             }
 
             update() {
@@ -209,16 +212,16 @@
             }
 
             createParticles(count, isSecondary = false) {
-                const name = "Reymart";
+                const name = "Happy New Year";
                 for (let i = 0; i < count; i++) {
                     const angle = (Math.PI * 2) / count * i + (isSecondary ? Math.PI / count : 0); // Offset for secondary
-                    const velocity = Math.random() * 4 + 2;
+                    const velocity = Math.random() * 2 + 1; // Reduced velocity for slow-mo
                     const velocityX = Math.cos(angle) * velocity;
                     const velocityY = Math.sin(angle) * velocity;
                     const size = Math.random() * 3 + 1;
 
                     if (i < name.length) {
-                        // Text particle for name (always included now)
+                        // Text particle for name (always included, using firework color)
                         particles.push(new Particle(this.x, this.y, this.color, velocityX, velocityY, size, true, name[i]));
                     } else {
                         // Regular particle
@@ -269,7 +272,7 @@
         setTimeout(() => {
             setInterval(() => {
                 fireworks.push(new Firework());
-            }, 800); // More frequent launches
+            }, 1200); // Slower launches for slow-mo effect
             animate();
         }, 1000);
     </script>
