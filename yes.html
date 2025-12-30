@@ -14,6 +14,7 @@
             align-items: center;
             font-family: Arial, sans-serif;
             margin: 0;
+            overflow: hidden; /* Prevent scrollbars from fireworks */
         }
 
         .box {
@@ -22,6 +23,8 @@
             border-radius: 20px;
             text-align: center;
             max-width: 420px;
+            position: relative;
+            z-index: 1; /* Ensure text is above fireworks */
         }
 
         h1 {
@@ -32,36 +35,243 @@
             font-size: 18px;
             margin-top: 10px;
         }
+
+        #congratsMessage {
+            font-size: 17px;
+            margin-top: 30px;
+            opacity: 0.9;
+            text-align: justify; /* Justify text for readability */
+            line-height: 1.6; /* Better line spacing */
+            padding: 0 10px; /* Slight padding to avoid edge crowding */
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Behind the text */
+        }
     </style>
 </head>
 
 <body>
 
+    <!-- Fireworks Canvas -->
+    <canvas id="fireworksCanvas"></canvas>
+
     <!-- Background Music -->
     <audio id="bgMusic" loop>
-        <source src="yes.mp3" type="audio/mpeg">
+        <source src="lana.mp4" type="audio/mpeg">
+    </audio>
+
+    <!-- Fireworks Sound -->
+    <audio id="fireworksSound" loop>
+        <source src="fireworks.mp4" type="audio/mpeg"> <!-- Replace with your fireworks sound file -->
     </audio>
 
     <div class="box">
-        <h1>✨ Welcome, Clyde ✨</h1>
-        <p>Thank you for stepping into my life.</p>
-        <p>Here’s to shared beginnings,</p>
-        <p>quiet moments, and a meaningful year ahead 🤍</p>
-        <p><strong>Happy New Year 🎆</strong></p>
+        <h1>✨ Welcome ✨</h1>
+
+        <!-- Expanded congratulatory message (will be typed out) -->
+        <p id="congratsMessage"></p>
 
         <p style="font-size:14px; margin-top:20px; opacity:0.7;">
             (Tap anywhere to play music 🎵)
         </p>
     </div>
 
-    <!-- Play music after user interaction -->
     <script>
+        // Play music after user interaction
         const music = document.getElementById("bgMusic");
+        const fireworksSound = document.getElementById("fireworksSound");
 
         document.body.addEventListener("click", () => {
             music.volume = 0.4;
             music.play();
+            fireworksSound.volume = 0.3; // Softer than main music
+            fireworksSound.play();
         }, { once: true });
+
+        // Typewriter effect for congratulatory message
+        const congratsText = "Congratulations on surviving this year! Amidst the unsaid words, hidden sorrows, and challenges that tested your spirit, you've emerged stronger, wiser, and more resilient. You've turned pain into power and uncertainty into opportunity. As we step into 2026, remember that every sunrise brings new possibilities—embrace them with courage, chase your dreams fearlessly, and let your light shine brightly. Good luck on this incredible journey ahead; may it be filled with joy, love, and endless growth! 🌟";
+        let charIndex = 0;
+        const congratsElement = document.getElementById("congratsMessage");
+
+        function typeCongrats() {
+            if (charIndex < congratsText.length) {
+                congratsElement.innerHTML += congratsText.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeCongrats, 100); // Slower typing for emphasis
+            }
+        }
+
+        // Start typing after a short delay
+        setTimeout(typeCongrats, 2000);
+
+        // Fireworks display with improvements
+        const canvas = document.getElementById("fireworksCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const fireworks = [];
+        const trails = []; // For particle trails
+
+        class Particle {
+            constructor(x, y, color, velocityX, velocityY, size, isText = false, text = '') {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocityX = velocityX;
+                this.velocityY = velocityY;
+                this.size = size;
+                this.alpha = 1;
+                this.isText = isText;
+                this.text = text;
+                this.trail = []; // Store trail positions
+            }
+
+            update() {
+                // Add to trail
+                this.trail.push({ x: this.x, y: this.y });
+                if (this.trail.length > 10) this.trail.shift(); // Limit trail length
+
+                this.x += this.velocityX;
+                this.y += this.velocityY;
+                this.velocityY += 0.08; // Stronger gravity
+                this.alpha -= 0.008; // Slower fade
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+
+                // Draw trail
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = this.size / 2;
+                ctx.beginPath();
+                for (let i = 1; i < this.trail.length; i++) {
+                    ctx.moveTo(this.trail[i - 1].x, this.trail[i - 1].y);
+                    ctx.lineTo(this.trail[i].x, this.trail[i].y);
+                }
+                ctx.stroke();
+
+                // Draw particle
+                if (this.isText) {
+                    ctx.font = `${this.size * 5}px Arial`;
+                    ctx.fillStyle = this.color;
+                    ctx.fillText(this.text, this.x, this.y);
+                } else {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        class Firework {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height;
+                this.targetY = Math.random() * canvas.height / 2;
+                this.speed = Math.random() * 4 + 3;
+                this.color = `hsl(${Math.random() * 360}, 100%, 60%)`; // Brighter colors
+                this.exploded = false;
+                this.secondaryExploded = false;
+                this.explodeDelay = Math.random() * 500 + 300; // Delay for secondary burst
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.y -= this.speed;
+                    if (this.y <= this.targetY) {
+                        this.explode();
+                    }
+                } else if (!this.secondaryExploded && Date.now() - this.explodeTime > this.explodeDelay) {
+                    this.secondaryExplode(); // Double pop-up
+                }
+            }
+
+            explode() {
+                this.exploded = true;
+                this.explodeTime = Date.now();
+                this.createParticles(60); // More particles for first burst
+            }
+
+            secondaryExplode() {
+                this.secondaryExploded = true;
+                this.createParticles(30, true); // Smaller secondary burst
+            }
+
+            createParticles(count, isSecondary = false) {
+                const name = "Reymart";
+                for (let i = 0; i < count; i++) {
+                    const angle = (Math.PI * 2) / count * i + (isSecondary ? Math.PI / count : 0); // Offset for secondary
+                    const velocity = Math.random() * 4 + 2;
+                    const velocityX = Math.cos(angle) * velocity;
+                    const velocityY = Math.sin(angle) * velocity;
+                    const size = Math.random() * 3 + 1;
+
+                    if (i < name.length) {
+                        // Text particle for name (always included now)
+                        particles.push(new Particle(this.x, this.y, this.color, velocityX, velocityY, size, true, name[i]));
+                    } else {
+                        // Regular particle
+                        particles.push(new Particle(this.x, this.y, this.color, velocityX, velocityY, size));
+                    }
+                }
+            }
+
+            draw() {
+                if (!this.exploded) {
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(this.x, this.y, 3, 15); // Thicker launch trail
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Update and draw fireworks
+            fireworks.forEach((firework, index) => {
+                firework.update();
+                firework.draw();
+                if (firework.secondaryExploded) {
+                    fireworks.splice(index, 1);
+                }
+            });
+
+            // Update and draw particles
+            particles.forEach((particle, index) => {
+                particle.update();
+                particle.draw();
+                if (particle.alpha <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Start fireworks after page load
+        setTimeout(() => {
+            setInterval(() => {
+                fireworks.push(new Firework());
+            }, 800); // More frequent launches
+            animate();
+        }, 1000);
     </script>
 
 </body>
