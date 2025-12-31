@@ -98,7 +98,7 @@ function moveNo() {
         noBtn.style.display = "none";
         const messageDiv = document.createElement("div");
         messageDiv.className = "message bold";
-        messageDiv.innerHTML = "Let go of the past in 2025 and step boldly into 2026. Every new year is a fresh start—embrace it with open arms! 🌟";
+        messageDiv.innerHTML = "Let go of the past in 2025 and step boldly into 2026. Every new year is a fresh start and embrace it with open arms! 🌟";
         document.querySelector(".container").appendChild(messageDiv);
     }
 }
@@ -159,4 +159,5 @@ document.addEventListener('click', () => {
         bgMusic.play().catch(() => {});
     }
 }, { once: true });  // 'once' ensures it only triggers on the first click
+
 
