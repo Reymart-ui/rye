@@ -2,7 +2,7 @@
 /* =======================
    TYPING NAME EFFECT
 ======================= */
-const nameText = "@clyde";  // Removed leading space for cleaner display
+const nameText = "@clydetastrophe";  // Removed leading space for cleaner display
 let i = 0;
 const nameSpan = document.getElementById("name");
 
@@ -159,3 +159,4 @@ document.addEventListener('click', () => {
         bgMusic.play().catch(() => {});
     }
 }, { once: true });  // 'once' ensures it only triggers on the first click
+
