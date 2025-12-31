@@ -2,7 +2,7 @@
 /* =======================
    TYPING NAME EFFECT
 ======================= */
-const nameText = "....";  // Removed leading space for cleaner display
+const nameText = "@clyde";  // Removed leading space for cleaner display
 let i = 0;
 const nameSpan = document.getElementById("name");
 
